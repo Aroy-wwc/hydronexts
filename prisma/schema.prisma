@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+}
+
+// Enums
+enum MachineStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+  OUT_OF_WATER
+  ERROR
+}
+
+enum TransactionStatus {
+  PENDING_PAYMENT
+  PAYMENT_COMPLETE
+  PAYMENT_FAILED
+}
+
+// Models
+model Machine {
+  id                  String               @id @default(uuid())
+  locationDescription String               @map("location_description")
+  locationLink        String               @map("location_link")
+  status              MachineStatus
+  installedAt         DateTime             @map("installed_at")
+  lastOnlineAt        DateTime?            @map("last_online_at") // Nullable if machine hasn't come online yet
+  
+  // Relations
+  hourlyReports       HourlyMachineReport[] // One-to-many relation to HourlyMachineReport
+  maintenanceLogs     MaintenanceLog[]      // One-to-many relation to MaintenanceLog
+  qrCodePayments      QrCodePayment[]       // One-to-many relation to QrCodePayment
+
+  @@map("machines") // Maps Prisma model 'Machine' to database table 'machines'
+}
+
+model QrCodePayment {
+  id          String           @id @default(uuid())
+  machineId   String           @map("machine_id")
+  decodedQr   String           @map("decoded_qr") /// Decoded Qr
+  amount      Int
+  createdAt   DateTime         @default(now()) @map("created_at")
+  expiresAt   DateTime         @map("expires_at")
+  completedAt DateTime?        @map("completed_at") // Nullable if not completed yet
+  status      TransactionStatus
+
+  // Relation
+  machine     Machine          @relation(fields: [machineId], references: [id])
+
+  @@map("qr_code_payments") // Maps Prisma model 'QrCodePayment' to database table 'qr_code_payments'
+}
+
+model MaintenanceLog {
+  id             String   @id @default(uuid())
+  machineId      String   @map("machine_id")
+  maintenanceDate DateTime @map("maintenance_date")
+  technicianName String   @map("technician_name")
+  notes          String
+
+  // Relation
+  machine        Machine  @relation(fields: [machineId], references: [id])
+
+  @@map("maintenance_logs") // Maps Prisma model 'MaintenanceLog' to database table 'maintenance_logs'
+}
+
+model HourlyMachineReport {
+  id                  String   @id @default(uuid())
+  machineId           String   @map("machine_id")
+  reportTimestamp     DateTime @map("report_timestamp")
+  totalRoDispensed    Int      @map("total_ro_dispensed")
+  totalAlDispensed    Int      @map("total_al_dispensed")
+  totalMiDispensed    Int      @map("total_mi_dispensed")
+  totalQrRevenue      Int      @map("total_qr_revenue")
+  totalCashRevenue    Int      @map("total_cash_revenue")
+  numCashTransaction  Int      @map("num_cash_transaction")
+  numQrTransaction    Int      @map("num_qr_transaction")
+  totalSBtlCount      Int      @map("total_s_btl_count")
+  totalMBtlCount      Int      @map("total_m_btl_count")
+  totalLBtlCount      Int      @map("total_l_btl_count")
+  totalXlBtlCount     Int      @map("total_xl_btl_count")
+  receivedAt          DateTime @default(now()) @map("received_at")
+
+  // Relation
+  machine             Machine  @relation(fields: [machineId], references: [id])
+
+  @@map("hourly_machine_reports") // Maps Prisma model 'HourlyMachineReport' to database table 'hourly_machine_reports'
+}
