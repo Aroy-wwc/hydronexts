@@ -3,7 +3,7 @@
 import { NextResponse } from 'next/server';
 // Update the path below if your prisma client is located elsewhere
 import prisma from '../../lib/prisma'; // Your shared Prisma client instance
-import { MachineStatus } from '@prisma/client'; // Import MachineStatus enum for type safety
+import { MachineStatus } from '@/app/generated/prisma';
 
 // --- GET (Read) all machines ---
 // Handles GET requests to /api/dashboard/machines

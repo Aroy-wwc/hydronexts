@@ -1,5 +1,7 @@
 // lib/prisma.ts
 import { PrismaClient } from '@prisma/client';
+// Or, if you have a path alias like "@generated": ["./app/generated"] in tsconfig.json:
+// import { PrismaClient } from '@/generated/prisma';
 
 // Declare a global variable to store the PrismaClient instance.
 // This is a common pattern in Next.js to prevent hot-reloading
