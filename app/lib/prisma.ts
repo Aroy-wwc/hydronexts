@@ -1,5 +1,5 @@
 // lib/prisma.ts
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../generated/prisma';
 // Or, if you have a path alias like "@generated": ["./app/generated"] in tsconfig.json:
 // import { PrismaClient } from '@/generated/prisma';
 
