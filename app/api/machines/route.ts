@@ -8,7 +8,7 @@ import { MachineStatus } from '@/app/generated/prisma';
 // --- GET (Read) all machines ---
 // Handles GET requests to /api/dashboard/machines
 // Example: GET /api/dashboard/machines
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const machines = await prisma.machine.findMany({
       orderBy: { installedAt: 'asc' }, // Order them by installation date
