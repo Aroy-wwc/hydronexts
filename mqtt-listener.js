@@ -46,25 +46,25 @@ client.on('message', async (topic, message) => {
     const data = JSON.parse(message.toString());
 
     // Create HourlyMachineReport in DB
-    await prisma.hourlyMachineReport.create({
+    const createReport = await prisma.hourlyMachineReport.create({
       data: {
         machineId,
-        reportTimestamp: new Date(data.reportTimestamp),
-        totalRoDispensed: data.totalRoDispensed,
-        totalAlDispensed: data.totalAlDispensed,
-        totalMiDispensed: data.totalMiDispensed,
-        totalQrRevenue: data.totalQrRevenue,
-        totalCashRevenue: data.totalCashRevenue,
-        numCashTransaction: data.numCashTransaction,
-        numQrTransaction: data.numQrTransaction,
-        totalSBtlCount: data.totalSBtlCount,
-        totalMBtlCount: data.totalMBtlCount,
-        totalLBtlCount: data.totalLBtlCount,
-        totalXlBtlCount: data.totalXlBtlCount,
+        reportTimestamp: new Date(data.report_timestamp),
+        totalRoDispensed: data.total_ro_dispensed,
+        totalAlDispensed: data.total_al_dispensed,
+        totalMiDispensed: data.total_mi_dispensed,
+        totalQrRevenue: data.total_qr_revenue,
+        totalCashRevenue: data.total_cash_revenue,
+        numCashTransaction: data.num_cash_transaction,
+        numQrTransaction: data.num_qr_transaction,
+        totalSBtlCount: data.total_s_btl_count,
+        totalMBtlCount: data.total_m_btl_count,
+        totalLBtlCount: data.total_l_btl_count,
+        totalXlBtlCount: data.total_xl_btl_count,
         // receivedAt will default to now()
       },
     });
-    console.log(`Hourly report saved for machine ${machineId}`);
+    console.log(`Hourly report saved for machine ${machineId}`, createReport);
   } catch (err) {
     console.error('Failed to process MQTT message:', err);
   }
